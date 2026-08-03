@@ -1,17 +1,204 @@
-<script>
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ហាងលក់ខោអាវ</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
+    
+    body { 
+      background-color: #f4f4f4; 
+      margin: 0; 
+      padding: 8px; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px; 
+    }
+
+    .section-container {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    /* បង្ខំឱ្យចេញ 3 ក្នុងមួយជួរ */
+    .product-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px !important;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      text-align: center;   
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #f0f0f0;
+      padding: 5px;
+      overflow: hidden;
+      justify-content: space-between;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #eee;
+    }
+
+    .image-wrapper img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      width: 100%;
+      margin: 4px 0;
+    }
+
+    .product-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-desc {
+      font-size: 9px;
+      color: #777;
+      margin-bottom: 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.2;
+    }
+
+    .price-tag {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ff4747;
+      margin-bottom: 4px;
+    }
+
+    .btn-add-cart {
+      width: 100%;
+      background-color: #ff4747;
+      color: white;
+      border: none;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* ប៊ូតុងបញ្ជា បង្កើន/បន្ថយ បរិមាណទំនិញ (+ / -) */
+    .qty-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background-color: #fff0f0;
+      border: 1px solid #ff4747;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .btn-qty {
+      background-color: #ff4747;
+      color: white;
+      border: none;
+      width: 26px;
+      height: 24px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qty-number {
+      font-size: 11px;
+      font-weight: bold;
+      color: #ff4747;
+    }
+
+    .order-box {
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .order-box h3 { margin-top: 0; font-size: 14px; }
+    input { width: 100%; padding: 8px; margin: 4px 0 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
+    .btn-submit { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    .loading { text-align: center; color: #777; padding: 15px; grid-column: 1 / -1; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="main-content">
+      <div class="loading">កំពុងផ្ទុកទំនិញ...</div>
+    </div>
+
+    <div class="order-box">
+      <h3>🛒 បញ្ជូនការកុម្ម៉ង់ទិញ</h3>
+      <div style="margin-bottom: 8px; font-size: 12px;">
+        កន្ត្រក៖ <b id="cart-count">0</b> មុខ | សរុប៖ <b id="cart-total" style="color:#ff4747;">$0</b>
+      </div>
+      
+      <label style="font-size: 11px; font-weight: bold;">ឈ្មោះរបស់អ្នក</label>
+      <input type="text" id="custName" placeholder="បញ្ចូលឈ្មោះ...">
+
+      <label style="font-size: 11px; font-weight: bold;">លេខទូរស័ព្ទ</label>
+      <input type="tel" id="custPhone" placeholder="បញ្ចូលលេខទូរស័ព្ទ...">
+
+      <button class="btn-submit" onclick="submitOrder()">បញ្ជាទិញភ្លាមៗ</button>
+    </div>
+  </div>
+
+  <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwvKz4kcj-HznHfO9wsCz6MzR_mUYWP9hZiLxBDvPwm7Tr90JqZXBGxAbNiGi5m4-mj/exec";
-    let cart = [];
+    let cart = {}; 
+    let allProducts = [];
 
     window.onload = function() {
-      // 1. ឆែកមើលបើមានទិន្នន័យចាស់ក្នុងទូរស័ព្ទ គឺបង្ហាញភ្លាម
       const localData = localStorage.getItem("LOCAL_PRODUCTS");
       if (localData) {
         try { 
-          renderProducts(JSON.parse(localData)); 
+          allProducts = JSON.parse(localData);
+          renderProducts(allProducts); 
         } catch(e){}
       }
-
-      // 2. បើកកងស្វែងរកទិន្នន័យពី Server
       fetchDataFromServer();
     };
 
@@ -19,7 +206,6 @@
       const script = document.createElement('script');
       script.src = API_URL + "?callback=handleServerResponse";
       script.onerror = function() {
-        // បើមានបញ្ហាអនឡាញ ឱ្យព្យាយាមទាញម្តងទៀតស្វ័យប្រវត្តិក្រោយ ២ វិនាទី
         setTimeout(fetchDataFromServer, 2000);
       };
       document.body.appendChild(script);
@@ -27,6 +213,7 @@
 
     function handleServerResponse(products) {
       if (products && products.length > 0) {
+        allProducts = products;
         localStorage.setItem("LOCAL_PRODUCTS", JSON.stringify(products));
         renderProducts(products);
       }
@@ -56,6 +243,9 @@
         categories[catName].forEach(p => {
           let imgUrl = p.image && p.image.toString().startsWith('http') ? p.image : 'https://picsum.photos/300/300';
           let descText = (p.description && p.description !== "-") ? p.description : '';
+          let pId = p.id;
+          let qty = cart[pId] ? cart[pId].qty : 0;
+
           fullHtml += `
             <div class="product-card">
               <div class="image-wrapper"><img src="${imgUrl}" alt="${p.name}" loading="lazy"></div>
@@ -64,7 +254,9 @@
                 ${descText ? `<div class="product-desc">${descText}</div>` : ''}
                 <div class="price-tag">$${p.price}</div>
               </div>
-              <button class="btn-add-cart" onclick="addToCart('${p.name}', ${p.price})">+ ថែមចូលកន្ត្រក</button>
+              <div id="btn-container-${pId}" style="width:100%;">
+                ${renderButtonHtml(pId, p.name, p.price, qty)}
+              </div>
             </div>
           `;
         });
@@ -73,22 +265,70 @@
       container.innerHTML = fullHtml;
     }
 
-    function addToCart(name, price) {
-      cart.push({ name, price: Number(price) });
-      document.getElementById('cart-count').innerText = cart.length;
-      let total = cart.reduce((sum, item) => sum + item.price, 0);
-      document.getElementById('cart-total').innerText = '$' + total;
-      alert("បានបន្ថែម " + name + " ទៅក្នុងកន្ត្រក!");
+    function renderButtonHtml(id, name, price, qty) {
+      if (qty > 0) {
+        return `
+          <div class="qty-control">
+            <button class="btn-qty" onclick="changeQty('${id}', '${name}', ${price}, -1)">-</button>
+            <span class="qty-number">${qty}</span>
+            <button class="btn-qty" onclick="changeQty('${id}', '${name}', ${price}, 1)">+</button>
+          </div>
+        `;
+      } else {
+        return `<button class="btn-add-cart" onclick="changeQty('${id}', '${name}', ${price}, 1)">+ ថែមចូលកន្ត្រក</button>`;
+      }
+    }
+
+    function changeQty(id, name, price, delta) {
+      if (!cart[id]) {
+        cart[id] = { name: name, price: Number(price), qty: 0 };
+      }
+      
+      cart[id].qty += delta;
+
+      if (cart[id].qty <= 0) {
+        delete cart[id];
+      }
+
+      // បច្ចុប្បន្នភាពប៊ូតុងដោយផ្ទាល់ (គ្មានផ្ទាំង Alert រំខានទៀតទេ)
+      const btnContainer = document.getElementById(`btn-container-${id}`);
+      if (btnContainer) {
+        let currentQty = cart[id] ? cart[id].qty : 0;
+        btnContainer.innerHTML = renderButtonHtml(id, name, price, currentQty);
+      }
+
+      updateCartSummary();
+    }
+
+    function updateCartSummary() {
+      let totalCount = 0;
+      let totalPrice = 0;
+
+      for (let key in cart) {
+        totalCount += cart[key].qty;
+        totalPrice += cart[key].qty * cart[key].price;
+      }
+
+      document.getElementById('cart-count').innerText = totalCount;
+      document.getElementById('cart-total').innerText = '$' + totalPrice;
     }
 
     function submitOrder() {
       const name = document.getElementById('custName').value.trim();
       const phone = document.getElementById('custPhone').value.trim();
       if (!name || !phone) return alert("សូមបញ្ចូលឈ្មោះ និងលេខទូរស័ព្ទ!");
-      if (cart.length === 0) return alert("សូមបន្ថែមទំនិញចូលកន្ត្រកមុនបញ្ជូន!");
 
-      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-      const itemsText = cart.map(i => i.name).join(", ");
+      let itemsArray = [];
+      let totalPrice = 0;
+
+      for (let key in cart) {
+        itemsArray.push(`${cart[key].name} (x${cart[key].qty})`);
+        totalPrice += cart[key].qty * cart[key].price;
+      }
+
+      if (itemsArray.length === 0) return alert("សូមបន្ថែមទំនិញចូលកន្ត្រកមុនបញ្ជូន!");
+
+      const itemsText = itemsArray.join(", ");
       const btn = document.querySelector('.btn-submit');
       btn.innerText = "កំពុងបញ្ជូន...";
       btn.disabled = true;
@@ -106,13 +346,15 @@
 
     function onOrderSuccess() {
       alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
-      cart = [];
-      document.getElementById('cart-count').innerText = '0';
-      document.getElementById('cart-total').innerText = '$0';
+      cart = {};
+      updateCartSummary();
       document.getElementById('custName').value = '';
       document.getElementById('custPhone').value = '';
       const btn = document.querySelector('.btn-submit');
       btn.innerText = "បញ្ជាទិញភ្លាមៗ";
       btn.disabled = false;
+      renderProducts(allProducts);
     }
   </script>
+</body>
+</html>
