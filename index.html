@@ -6,20 +6,122 @@
   <title>ហាងលក់ខោអាវ</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #f4f4f4; margin: 0; padding: 8px; display: flex; justify-content: center; }
-    .app-container { width: 100%; max-width: 480px; }
-    .section-container { background: white; border-radius: 10px; padding: 10px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
-    .section-title { font-size: 14px; font-weight: 800; color: #333; margin-bottom: 8px; }
-    .product-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-    .product-card { display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; border-radius: 8px; border: 1px solid #f0f0f0; padding: 5px; overflow: hidden; justify-content: space-between; }
-    .image-wrapper { position: relative; width: 100%; padding-top: 100%; border-radius: 6px; overflow: hidden; background-color: #eee; }
-    .image-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-    .product-info { width: 100%; margin: 4px 0; }
-    .product-name { font-size: 11px; font-weight: 700; color: #222; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .product-desc { font-size: 9px; color: #777; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
-    .price-tag { font-size: 13px; font-weight: 800; color: #ff4747; margin-bottom: 4px; }
-    .btn-add-cart { width: 100%; background-color: #ff4747; color: white; border: none; padding: 6px 2px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
-    .order-box { background: white; border-radius: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    
+    body { 
+      background-color: #f4f4f4; 
+      margin: 0; 
+      padding: 8px; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px; 
+    }
+
+    .section-container {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    /* បង្ខំឱ្យចេញ 3 ក្នុងមួយជួរ */
+    .product-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px !important;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      text-align: center;   
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #f0f0f0;
+      padding: 5px;
+      overflow: hidden;
+      justify-content: space-between;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: #eee;
+    }
+
+    .image-wrapper img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      width: 100%;
+      margin: 4px 0;
+    }
+
+    .product-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-desc {
+      font-size: 9px;
+      color: #777;
+      margin-bottom: 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.2;
+    }
+
+    .price-tag {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ff4747;
+      margin-bottom: 4px;
+    }
+
+    .btn-add-cart {
+      width: 100%;
+      background-color: #ff4747;
+      color: white;
+      border: none;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .order-box {
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
     .order-box h3 { margin-top: 0; font-size: 14px; }
     input { width: 100%; padding: 8px; margin: 4px 0 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
     .btn-submit { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; }
@@ -54,12 +156,10 @@
     let cart = [];
 
     window.onload = function() {
-      fetch(API_URL)
-        .then(res => res.json())
-        .then(data => renderProducts(data))
-        .catch(err => {
-          document.getElementById('main-content').innerHTML = "<div class='loading'>មាន Error ក្នុងការទាញយកទិន្នន័យ</div>";
-        });
+      // ប្រើ JSONP ដើម្បីរំលង CORS បញ្ហា
+      const script = document.createElement('script');
+      script.src = API_URL + "?callback=renderProducts";
+      document.body.appendChild(script);
     };
 
     function renderProducts(products) {
@@ -123,25 +223,27 @@
       btn.innerText = "កំពុងបញ្ជូន...";
       btn.disabled = true;
 
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "submitOrder", name, phone, items: itemsText, totalPrice })
-      })
-      .then(() => {
-        alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
-        cart = [];
-        document.getElementById('cart-count').innerText = '0';
-        document.getElementById('cart-total').innerText = '$0';
-        document.getElementById('custName').value = '';
-        document.getElementById('custPhone').value = '';
-        btn.innerText = "បញ្ជាទិញភ្លាមៗ";
-        btn.disabled = false;
-      })
-      .catch(() => {
-        alert("🎉 ការកុម្ម៉ង់បានផ្ញើទៅកាន់រោងចក្ររួចរាល់!");
-        btn.innerText = "បញ្ជាទិញភ្លាមៗ";
-        btn.disabled = false;
-      });
+      const orderUrl = API_URL + "?action=submitOrder&name=" + encodeURIComponent(name) + 
+                       "&phone=" + encodeURIComponent(phone) + 
+                       "&items=" + encodeURIComponent(itemsText) + 
+                       "&totalPrice=" + encodeURIComponent(totalPrice) + 
+                       "&callback=onOrderSuccess";
+
+      const script = document.createElement('script');
+      script.src = orderUrl;
+      document.body.appendChild(script);
+    }
+
+    function onOrderSuccess() {
+      alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
+      cart = [];
+      document.getElementById('cart-count').innerText = '0';
+      document.getElementById('cart-total').innerText = '$0';
+      document.getElementById('custName').value = '';
+      document.getElementById('custPhone').value = '';
+      const btn = document.querySelector('.btn-submit');
+      btn.innerText = "បញ្ជាទិញភ្លាមៗ";
+      btn.disabled = false;
     }
   </script>
 </body>
