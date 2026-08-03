@@ -24,7 +24,35 @@
       max-width: 480px; 
     }
 
-    /* ផ្នែក Header Container ដើម */
+    /* Sponsor Banner Slideshow */
+    .banner-slider {
+      position: relative;
+      width: 100%;
+      height: 130px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      background-color: #ddd;
+    }
+
+    .banner-slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .banner-slide.active {
+      opacity: 1;
+    }
+
+    .banner-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
     .header-social-box {
       background: white;
       border-radius: 10px;
@@ -33,7 +61,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
 
-    /* ផ្នែកអក្សររត់ Marquee */
     .marquee-container {
       background-color: #fff8e7;
       border: 1px solid #ffe0b2;
@@ -289,16 +316,19 @@
 
   <div class="app-container">
     
+    <!-- Sponsor Banner Slideshow -->
+    <div id="banner-slider" class="banner-slider">
+      <div class="banner-slide active"><img src="https://picsum.photos/600/200" alt="Sponsor"></div>
+    </div>
+
     <!-- Header ផ្នែកអក្សររត់ & Social Links -->
     <div class="header-social-box">
-      <!-- ផ្នែកអក្សររត់ Marquee ខាងលើ -->
       <div class="marquee-container">
         <marquee id="announcement-text" behavior="scroll" direction="left" scrollamount="4">
           🎉 កំពុងផ្ទុកព័ត៌មាន...
         </marquee>
       </div>
 
-      <!-- ផ្នែក Social Links ខាងក្រោម -->
       <div class="social-row">
         <span class="header-title">ទំនាក់ទំនងយើង៖</span>
         <div class="social-links">
@@ -321,12 +351,10 @@
       </div>
     </div>
 
-    <!-- Main Content Products Grid -->
     <div id="main-content">
       <div class="loading">កំពុងផ្ទុកទំនិញ...</div>
     </div>
 
-    <!-- Order Box -->
     <div class="order-box">
       <h3>🛒 បញ្ជូនការកុម្ម៉ង់ទិញ</h3>
       
@@ -352,6 +380,8 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbwvKz4kcj-HznHfO9wsCz6MzR_mUYWP9hZiLxBDvPwm7Tr90JqZXBGxAbNiGi5m4-mj/exec";
     let cart = {}; 
     let allProducts = [];
+    let slideIndex = 0;
+    let slideTimer = null;
 
     window.onload = function() {
       const localData = localStorage.getItem("LOCAL_PRODUCTS");
@@ -375,6 +405,10 @@
 
     function handleServerResponse(response) {
       if (response) {
+        if (response.banners && response.banners.length > 0) {
+          renderBanners(response.banners);
+        }
+
         if (response.announcement) {
           document.getElementById('announcement-text').innerText = response.announcement;
         }
@@ -392,6 +426,27 @@
           localStorage.setItem("LOCAL_PRODUCTS", JSON.stringify(response.products));
           renderProducts(response.products);
         }
+      }
+    }
+
+    function renderBanners(bannerUrls) {
+      const slider = document.getElementById('banner-slider');
+      let html = '';
+      bannerUrls.forEach((url, index) => {
+        html += `<div class="banner-slide ${index === 0 ? 'active' : ''}"><img src="${url}" alt="Sponsor ${index}"></div>`;
+      });
+      slider.innerHTML = html;
+
+      if (slideTimer) clearInterval(slideTimer);
+      if (bannerUrls.length > 1) {
+        slideTimer = setInterval(() => {
+          const slides = document.querySelectorAll('.banner-slide');
+          if (slides.length > 0) {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+          }
+        }, 3500); // ផ្លាស់ប្តូរស្លាយរៀងរាល់ 3.5 វិនាទី
       }
     }
 
@@ -541,7 +596,7 @@
     }
 
     function onOrderSuccess() {
-      alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
+      alert("🎉 ការកុម្មង់ជោគជ័យ!");
       cart = {};
       updateCartSummary();
       document.getElementById('custName').value = '';
