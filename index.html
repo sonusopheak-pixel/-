@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ហាងលក់ខោអាវ</title>
+  <!-- ភ្ជាប់ FontAwesome សម្រាប់ទាញយក Logo Social Media ស្អាតៗ -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { 
       box-sizing: border-box; 
@@ -23,6 +25,45 @@
       max-width: 480px; 
     }
 
+    /* ផ្នែក Header Social Media Links */
+    .header-social-box {
+      background: white;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .social-icon {
+      font-size: 20px;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+
+    .social-icon:hover {
+      transform: scale(1.15);
+    }
+
+    .icon-facebook { color: #1877F2; }
+    .icon-telegram { color: #24A1DE; }
+    .icon-line { color: #00B900; }
+    .icon-youtube { color: #FF0000; }
+
     .section-container {
       background: white;
       border-radius: 10px;
@@ -38,7 +79,6 @@
       margin-bottom: 8px;
     }
 
-    /* បង្ខំឱ្យចេញ 3 ក្នុងមួយជួរ */
     .product-grid {
       display: grid !important;
       grid-template-columns: repeat(3, 1fr) !important;
@@ -119,7 +159,6 @@
       cursor: pointer;
     }
 
-    /* ប៊ូតុងបញ្ជា បង្កើន/បន្ថយ បរិមាណទំនិញ (+ / -) */
     .qty-control {
       display: flex;
       align-items: center;
@@ -166,6 +205,33 @@
 <body>
 
   <div class="app-container">
+    
+    <!-- Header ផ្នែក Logo Social Media -->
+    <div class="header-social-box">
+      <span class="header-title">ទំនាក់ទំនងយើង៖</span>
+      <div class="social-links">
+        <!-- 🔗 សូមប្តូរ https://facebook.com/yourpage ទៅជា Link Facebook Page របស់អ្នក -->
+        <a href="https://facebook.com/yourpage" target="_blank" class="social-icon icon-facebook" title="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        
+        <!-- 🔗 សូមប្តូរ https://t.me/yourusername ទៅជា Link Telegram របស់អ្នក -->
+        <a href="https://t.me/yourusername" target="_blank" class="social-icon icon-telegram" title="Telegram">
+          <i class="fab fa-telegram"></i>
+        </a>
+
+        <!-- 🔗 សូមប្តូរ https://line.me/ti/p/yourid ទៅជា Link LINE របស់អ្នក -->
+        <a href="https://line.me/ti/p/yourid" target="_blank" class="social-icon icon-line" title="LINE">
+          <i class="fab fa-line"></i>
+        </a>
+
+        <!-- 🔗 សូមប្តូរ https://youtube.com/@yourchannel ទៅជា Link YouTube របស់អ្នក -->
+        <a href="https://youtube.com/@yourchannel" target="_blank" class="social-icon icon-youtube" title="YouTube">
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+    </div>
+
     <div id="main-content">
       <div class="loading">កំពុងផ្ទុកទំនិញ...</div>
     </div>
@@ -290,8 +356,7 @@
         delete cart[id];
       }
 
-      // បច្ចុប្បន្នភាពប៊ូតុងដោយផ្ទាល់ (គ្មានផ្ទាំង Alert រំខានទៀតទេ)
-      const btnContainer = document.getElementById(`btn-container-${id}`);
+      const btnContainer = document.getElementById('btn-container-' + id);
       if (btnContainer) {
         let currentQty = cart[id] ? cart[id].qty : 0;
         btnContainer.innerHTML = renderButtonHtml(id, name, price, currentQty);
@@ -322,7 +387,7 @@
       let totalPrice = 0;
 
       for (let key in cart) {
-        itemsArray.push(`${cart[key].name} (x${cart[key].qty})`);
+        itemsArray.push(cart[key].name + " (x" + cart[key].qty + ")");
         totalPrice += cart[key].qty * cart[key].price;
       }
 
