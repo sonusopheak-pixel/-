@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ហាងលក់ខោអាវ</title>
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { 
+      box-sizing: border-box; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
     
     body { 
       background-color: #f4f4f4; 
@@ -156,11 +159,23 @@
     let cart = [];
 
     window.onload = function() {
-      // ប្រើ JSONP ដើម្បីរំលង CORS បញ្ហា
+      // 1. បង្ហាញទិន្នន័យចាស់ពី Memory ទូរស័ព្ទភ្លាមៗ (Instant Show)
+      const localData = localStorage.getItem("LOCAL_PRODUCTS");
+      if (localData) {
+        try { renderProducts(JSON.parse(localData)); } catch(e){}
+      }
+
+      // 2. ទាញយកទិន្នន័យថ្មីពី Server តាមក្រោយ
       const script = document.createElement('script');
-      script.src = API_URL + "?callback=renderProducts";
+      script.src = API_URL + "?callback=handleServerResponse";
       document.body.appendChild(script);
     };
+
+    function handleServerResponse(products) {
+      // រក្សាទុកក្នុង Memory ទូរស័ព្ទសម្រាប់បើកលើកក្រោយ
+      localStorage.setItem("LOCAL_PRODUCTS", JSON.stringify(products));
+      renderProducts(products);
+    }
 
     function renderProducts(products) {
       const container = document.getElementById('main-content');
@@ -188,7 +203,7 @@
           let descText = (p.description && p.description !== "-") ? p.description : '';
           fullHtml += `
             <div class="product-card">
-              <div class="image-wrapper"><img src="${imgUrl}" alt="${p.name}"></div>
+              <div class="image-wrapper"><img src="${imgUrl}" alt="${p.name}" loading="lazy"></div>
               <div class="product-info">
                 <div class="product-name">${p.name}</div>
                 ${descText ? `<div class="product-desc">${descText}</div>` : ''}
