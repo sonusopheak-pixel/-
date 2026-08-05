@@ -395,7 +395,6 @@
     let buyerChatId = null;
 
     window.onload = function() {
-      // ព្យាយាមទាញយក Chat ID របស់ Telegram User
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
         if (tgUser && tgUser.id) {
@@ -599,11 +598,42 @@
 
       if (itemsArray.length === 0) return alert("សូមបន្ថែមទំនិញចូលកន្ត្រកមុនបញ្ជូន!");
 
-      const itemsText = itemsArray.join(", ");
       const btn = document.querySelector('.btn-submit');
-      btn.innerText = "កំពុងបញ្ជូន...";
+      btn.innerText = "កំពុងពិនិត្យ...";
       btn.disabled = true;
 
+      // 1. ពិនិត្យមើល Order Pending មុនពេលអនុញ្ញាតឱ្យកុម្ម៉ង់
+      const checkUrl = API_URL + "?action=checkPendingOrder&buyerChatId=" + encodeURIComponent(buyerChatId || "") + "&callback=onCheckPendingResult";
+      const scriptCheck = document.createElement('script');
+      scriptCheck.src = checkUrl;
+      document.body.appendChild(scriptCheck);
+    }
+
+    function onCheckPendingResult(res) {
+      const btn = document.querySelector('.btn-submit');
+
+      // ប្រសិនបើមាន Order ចាស់មិនទាន់បានអនុម័ត មិនឱ្យកុម្ម៉ង់ឡើយ
+      if (res && res.hasPending) {
+        alert("⚠️ អ្នកមានការកុម្ម៉ង់ទិញមុននេះដែលកំពុងរង់ចាំ Admin ពិនិត្យ/ដឹកជញ្ជូន! សូមរង់ចាំរហូតដល់ Admin បញ្ចប់ Order ចាស់ជាមុនសិន។");
+        btn.innerText = "បញ្ជាទិញភ្លាមៗ";
+        btn.disabled = false;
+        return;
+      }
+
+      // ប្រសិនបើគ្មាន Order ជំពាក់ទេ ដំណើរការផ្ញើ Order ថ្មី
+      btn.innerText = "កំពុងបញ្ជូន...";
+      
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      let itemsArray = [];
+      let totalPrice = 0;
+
+      for (let key in cart) {
+        itemsArray.push(cart[key].name + " (x" + cart[key].qty + ")");
+        totalPrice += cart[key].qty * cart[key].price;
+      }
+
+      const itemsText = itemsArray.join(", ");
       const orderUrl = API_URL + "?action=submitOrder&name=" + encodeURIComponent(name) + 
                        "&phone=" + encodeURIComponent(phone) + 
                        "&items=" + encodeURIComponent(itemsText) + 
@@ -611,9 +641,9 @@
                        "&buyerChatId=" + encodeURIComponent(buyerChatId || "") +
                        "&callback=onOrderSuccess";
 
-      const script = document.createElement('script');
-      script.src = orderUrl;
-      document.body.appendChild(script);
+      const scriptOrder = document.createElement('script');
+      scriptOrder.src = orderUrl;
+      document.body.appendChild(scriptOrder);
     }
 
     function onOrderSuccess() {
@@ -626,7 +656,6 @@
       btn.innerText = "បញ្ជាទិញភ្លាមៗ";
       btn.disabled = false;
       
-      // បិទ WebApp ស្វ័យប្រវត្តិ
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.close();
       } else {
