@@ -24,7 +24,6 @@
       max-width: 480px; 
     }
 
-    /* Sponsor Banner Slideshow */
     .banner-slider {
       position: relative;
       width: 100%;
@@ -142,6 +141,7 @@
       padding: 5px;
       overflow: hidden;
       justify-content: space-between;
+      position: relative;
     }
 
     .image-wrapper {
@@ -203,6 +203,18 @@
       font-size: 10px;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    .btn-out-stock {
+      width: 100%;
+      background-color: #7f8c8d;
+      color: white;
+      border: none;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: not-allowed;
     }
 
     .qty-control {
@@ -316,12 +328,10 @@
 
   <div class="app-container">
     
-    <!-- Sponsor Banner Slideshow -->
     <div id="banner-slider" class="banner-slider">
       <div class="banner-slide active"><img src="https://picsum.photos/600/200" alt="Sponsor"></div>
     </div>
 
-    <!-- Header ផ្នែកអក្សររត់ & Social Links -->
     <div class="header-social-box">
       <div class="marquee-container">
         <marquee id="announcement-text" behavior="scroll" direction="left" scrollamount="4">
@@ -395,8 +405,9 @@
     };
 
     function fetchDataFromServer() {
+      // ថែម Timestamp ដើម្បីបង្ខំឱ្យទាញយកទិន្នន័យថ្មីជានិច្ច គ្មានជាប់ Cache ពេលលុប
       const script = document.createElement('script');
-      script.src = API_URL + "?callback=handleServerResponse";
+      script.src = API_URL + "?t=" + new Date().getTime() + "&callback=handleServerResponse";
       script.onerror = function() {
         setTimeout(fetchDataFromServer, 2000);
       };
@@ -421,7 +432,7 @@
           document.getElementById('link-yt').href = response.socials.youtube || "#";
         }
 
-        if (response.products && response.products.length > 0) {
+        if (response.products) {
           allProducts = response.products;
           localStorage.setItem("LOCAL_PRODUCTS", JSON.stringify(response.products));
           renderProducts(response.products);
@@ -446,7 +457,7 @@
             slideIndex = (slideIndex + 1) % slides.length;
             slides[slideIndex].classList.add('active');
           }
-        }, 3500); // ផ្លាស់ប្តូរស្លាយរៀងរាល់ 3.5 វិនាទី
+        }, 3500);
       }
     }
 
@@ -476,6 +487,7 @@
           let descText = (p.description && p.description !== "-") ? p.description : '';
           let pId = p.id;
           let qty = cart[pId] ? cart[pId].qty : 0;
+          let isOutOfStock = (p.status === "OUT_OF_STOCK");
 
           fullHtml += `
             <div class="product-card">
@@ -486,7 +498,7 @@
                 <div class="price-tag">$${p.price}</div>
               </div>
               <div id="btn-container-${pId}" style="width:100%;">
-                ${renderButtonHtml(pId, p.name, p.price, imgUrl, qty)}
+                ${isOutOfStock ? `<button class="btn-out-stock" disabled>អស់ស្តុក</button>` : renderButtonHtml(pId, p.name, p.price, imgUrl, qty)}
               </div>
             </div>
           `;
@@ -596,7 +608,7 @@
     }
 
     function onOrderSuccess() {
-      alert("🎉 ការកុម្មង់ជោគជ័យ!");
+      alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
       cart = {};
       updateCartSummary();
       document.getElementById('custName').value = '';
