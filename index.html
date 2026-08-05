@@ -319,8 +319,29 @@
       padding: 10px 0;
     }
 
-    input { width: 100%; padding: 8px; margin: 4px 0 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
-    .btn-submit { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    input, select { 
+      width: 100%; 
+      padding: 8px; 
+      margin: 4px 0 10px; 
+      border: 1px solid #ddd; 
+      border-radius: 6px; 
+      box-sizing: border-box; 
+      font-size: 13px; 
+      background-color: #fff;
+    }
+
+    .btn-submit { 
+      width: 100%; 
+      background: #27ae60; 
+      color: white; 
+      border: none; 
+      padding: 10px; 
+      font-size: 14px; 
+      font-weight: bold; 
+      border-radius: 6px; 
+      cursor: pointer; 
+    }
+    
     .loading { text-align: center; color: #777; padding: 15px; grid-column: 1 / -1; font-size: 12px; }
   </style>
 </head>
@@ -376,11 +397,23 @@
         កន្ត្រក៖ <span id="cart-count" style="color:#27ae60;">0</span> មុខ | សរុប៖ <span id="cart-total" style="color:#ff4747;">$0</span>
       </div>
       
-      <label style="font-size: 11px; font-weight: bold;">ឈ្មោះរបស់អ្នក</label>
+      <label style="font-size: 11px; font-weight: bold;">ឈ្មោះរបស់អ្នក <span style="color:red;">*</span></label>
       <input type="text" id="custName" placeholder="បញ្ចូលឈ្មោះ...">
 
-      <label style="font-size: 11px; font-weight: bold;">លេខទូរស័ព្ទ</label>
+      <label style="font-size: 11px; font-weight: bold;">លេខទូរស័ព្ទ <span style="color:red;">*</span></label>
       <input type="tel" id="custPhone" placeholder="បញ្ចូលលេខទូរស័ព្ទ...">
+
+      <label style="font-size: 11px; font-weight: bold;">អាសយដ្ឋានដឹកជញ្ជូន (Address) <span style="color:red;">*</span></label>
+      <input type="text" id="custAddress" placeholder="បញ្ចូលទីតាំង/អាសយដ្ឋាន...">
+
+      <label style="font-size: 11px; font-weight: bold;">សេវាដឹកជញ្ជូន (Delivery Service) <span style="color:red;">*</span></label>
+      <select id="deliveryType">
+        <option value="">-- សូមជ្រើសរើសក្រុមហ៊ុនដឹកជញ្ជូន --</option>
+        <option value="J&T Express">J&T Express</option>
+        <option value="វីរៈប៊ុនថាំ (Virak Buntham)">វីរៈប៊ុនថាំ (Virak Buntham)</option>
+        <option value="ភ្នំពេញតាក់ស៊ី (Phnom Penh Taxi)">ភ្នំពេញតាក់ស៊ី (Phnom Penh Taxi)</option>
+        <option value="ដឹកជញ្ជូនទូទៅ (General Delivery)">ដឹកជញ្ជូនទូទៅ (General Delivery)</option>
+      </select>
 
       <button class="btn-submit" onclick="submitOrder()">បញ្ជាទិញភ្លាមៗ</button>
     </div>
@@ -586,7 +619,14 @@
     function submitOrder() {
       const name = document.getElementById('custName').value.trim();
       const phone = document.getElementById('custPhone').value.trim();
-      if (!name || !phone) return alert("សូមបញ្ចូលឈ្មោះ និងលេខទូរស័ព្ទ!");
+      const address = document.getElementById('custAddress').value.trim();
+      const deliveryType = document.getElementById('deliveryType').value.trim();
+
+      // 🔒 Validation: ត្រួតពិនិត្យថាគ្រប់ប្រអប់ត្រូវបានបំពេញ
+      if (!name) return alert("សូមបញ្ចូលឈ្មោះរបស់អ្នក!");
+      if (!phone) return alert("សូមបញ្ចូលលេខទូរស័ព្ទ!");
+      if (!address) return alert("សូមបញ្ចូលអាសយដ្ឋានដឹកជញ្ជូន!");
+      if (!deliveryType) return alert("សូមជ្រើសរើសក្រុមហ៊ុនដឹកជញ្ជូន!");
 
       let itemsArray = [];
       let totalPrice = 0;
@@ -599,43 +639,14 @@
       if (itemsArray.length === 0) return alert("សូមបន្ថែមទំនិញចូលកន្ត្រកមុនបញ្ជូន!");
 
       const btn = document.querySelector('.btn-submit');
-      btn.innerText = "កំពុងពិនិត្យ...";
-      btn.disabled = true;
-
-      // 1. ពិនិត្យមើល Order Pending មុនពេលអនុញ្ញាតឱ្យកុម្ម៉ង់
-      const checkUrl = API_URL + "?action=checkPendingOrder&buyerChatId=" + encodeURIComponent(buyerChatId || "") + "&callback=onCheckPendingResult";
-      const scriptCheck = document.createElement('script');
-      scriptCheck.src = checkUrl;
-      document.body.appendChild(scriptCheck);
-    }
-
-    function onCheckPendingResult(res) {
-      const btn = document.querySelector('.btn-submit');
-
-      // ប្រសិនបើមាន Order ចាស់មិនទាន់បានអនុម័ត មិនឱ្យកុម្ម៉ង់ឡើយ
-      if (res && res.hasPending) {
-        alert("⚠️ អ្នកមានការកុម្ម៉ង់ទិញមុននេះដែលកំពុងរង់ចាំ Admin ពិនិត្យ/ដឹកជញ្ជូន! សូមរង់ចាំរហូតដល់ Admin បញ្ចប់ Order ចាស់ជាមុនសិន។");
-        btn.innerText = "បញ្ជាទិញភ្លាមៗ";
-        btn.disabled = false;
-        return;
-      }
-
-      // ប្រសិនបើគ្មាន Order ជំពាក់ទេ ដំណើរការផ្ញើ Order ថ្មី
       btn.innerText = "កំពុងបញ្ជូន...";
-      
-      const name = document.getElementById('custName').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
-      let itemsArray = [];
-      let totalPrice = 0;
-
-      for (let key in cart) {
-        itemsArray.push(cart[key].name + " (x" + cart[key].qty + ")");
-        totalPrice += cart[key].qty * cart[key].price;
-      }
+      btn.disabled = true;
 
       const itemsText = itemsArray.join(", ");
       const orderUrl = API_URL + "?action=submitOrder&name=" + encodeURIComponent(name) + 
                        "&phone=" + encodeURIComponent(phone) + 
+                       "&address=" + encodeURIComponent(address) + 
+                       "&deliveryType=" + encodeURIComponent(deliveryType) + 
                        "&items=" + encodeURIComponent(itemsText) + 
                        "&totalPrice=" + encodeURIComponent(totalPrice) + 
                        "&buyerChatId=" + encodeURIComponent(buyerChatId || "") +
@@ -646,13 +657,23 @@
       document.body.appendChild(scriptOrder);
     }
 
-    function onOrderSuccess() {
+    function onOrderSuccess(res) {
+      const btn = document.querySelector('.btn-submit');
+
+      if (res && res.status === "blocked") {
+        alert("⚠️ Your order problem, please contact seller!");
+        btn.innerText = "បញ្ជាទិញភ្លាមៗ";
+        btn.disabled = false;
+        return;
+      }
+
       alert("🎉 ការកុម្ម៉ង់ជោគជ័យ! វិក្កយបត្រត្រូវបានផ្ញើចូល Telegram របស់អ្នក។");
       cart = {};
       updateCartSummary();
       document.getElementById('custName').value = '';
       document.getElementById('custPhone').value = '';
-      const btn = document.querySelector('.btn-submit');
+      document.getElementById('custAddress').value = '';
+      document.getElementById('deliveryType').value = '';
       btn.innerText = "បញ្ជាទិញភ្លាមៗ";
       btn.disabled = false;
       
