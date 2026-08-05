@@ -392,8 +392,17 @@
     let allProducts = [];
     let slideIndex = 0;
     let slideTimer = null;
+    let buyerChatId = null;
 
     window.onload = function() {
+      // ព្យាយាមទាញយក Chat ID របស់ Telegram User
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+        const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+        if (tgUser && tgUser.id) {
+          buyerChatId = tgUser.id;
+        }
+      }
+
       const localData = localStorage.getItem("LOCAL_PRODUCTS");
       if (localData) {
         try { 
@@ -405,7 +414,6 @@
     };
 
     function fetchDataFromServer() {
-      // ថែម Timestamp ដើម្បីបង្ខំឱ្យទាញយកទិន្នន័យថ្មីជានិច្ច គ្មានជាប់ Cache ពេលលុប
       const script = document.createElement('script');
       script.src = API_URL + "?t=" + new Date().getTime() + "&callback=handleServerResponse";
       script.onerror = function() {
@@ -600,6 +608,7 @@
                        "&phone=" + encodeURIComponent(phone) + 
                        "&items=" + encodeURIComponent(itemsText) + 
                        "&totalPrice=" + encodeURIComponent(totalPrice) + 
+                       "&buyerChatId=" + encodeURIComponent(buyerChatId || "") +
                        "&callback=onOrderSuccess";
 
       const script = document.createElement('script');
@@ -608,7 +617,7 @@
     }
 
     function onOrderSuccess() {
-      alert("🎉 ការកុម្ម៉ង់ជោគជ័យ!");
+      alert("🎉 ការកុម្ម៉ង់ជោគជ័យ! វិក្កយបត្រត្រូវបានផ្ញើចូល Telegram របស់អ្នក។");
       cart = {};
       updateCartSummary();
       document.getElementById('custName').value = '';
@@ -616,7 +625,13 @@
       const btn = document.querySelector('.btn-submit');
       btn.innerText = "បញ្ជាទិញភ្លាមៗ";
       btn.disabled = false;
-      renderProducts(allProducts);
+      
+      // បិទ WebApp ស្វ័យប្រវត្តិ
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.close();
+      } else {
+        renderProducts(allProducts);
+      }
     }
   </script>
 </body>
