@@ -426,12 +426,14 @@
     let slideIndex = 0;
     let slideTimer = null;
     let buyerChatId = null;
+    let buyerUsername = "";
 
     window.onload = function() {
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
         const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-        if (tgUser && tgUser.id) {
-          buyerChatId = tgUser.id;
+        if (tgUser) {
+          if (tgUser.id) buyerChatId = tgUser.id;
+          if (tgUser.username) buyerUsername = tgUser.username;
         }
       }
 
@@ -622,7 +624,6 @@
       const address = document.getElementById('custAddress').value.trim();
       const deliveryType = document.getElementById('deliveryType').value.trim();
 
-      // 🔒 Validation: ត្រួតពិនិត្យថាគ្រប់ប្រអប់ត្រូវបានបំពេញ
       if (!name) return alert("សូមបញ្ចូលឈ្មោះរបស់អ្នក!");
       if (!phone) return alert("សូមបញ្ចូលលេខទូរស័ព្ទ!");
       if (!address) return alert("សូមបញ្ចូលអាសយដ្ឋានដឹកជញ្ជូន!");
@@ -650,6 +651,7 @@
                        "&items=" + encodeURIComponent(itemsText) + 
                        "&totalPrice=" + encodeURIComponent(totalPrice) + 
                        "&buyerChatId=" + encodeURIComponent(buyerChatId || "") +
+                       "&buyerUsername=" + encodeURIComponent(buyerUsername || "") +
                        "&callback=onOrderSuccess";
 
       const scriptOrder = document.createElement('script');
