@@ -24,15 +24,16 @@
       max-width: 480px; 
     }
 
+    /* 🖼️ CSS សម្រាប់តម្រូវរូបភាព Banner ឱ្យស្អាត Full Background */
     .banner-slider {
       position: relative;
       width: 100%;
-      height: 130px;
+      height: 150px;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      background-color: #ddd;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background-color: #1e1e1e;
     }
 
     .banner-slide {
@@ -41,6 +42,9 @@
       width: 100%; height: 100%;
       opacity: 0;
       transition: opacity 0.8s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .banner-slide.active {
@@ -48,8 +52,10 @@
     }
 
     .banner-slide img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* បង្ហាញរូបភាពធំពេញលេញ ១០០% ដោយមិនបែក ឬសង្កត់ទ្រង់ទ្រាយរូប */
+      background: #1e1e1e;
     }
 
     .header-social-box {
@@ -366,7 +372,7 @@
           <a id="link-fb" href="#" target="_blank" class="social-icon" title="Facebook">
             <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a id="link-tg" href="#" target="_blank" class="social-icon" title="Telegram">
+          <a id="link-tg" href="https://t.me/kunros16" target="_blank" class="social-icon" title="Telegram">
             <svg viewBox="0 0 24 24" fill="#24A1DE"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.03 9.56c-.15.68-.56.84-1.13.53l-3.1-2.29-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.13l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.03-4.64c.56-.21 1.05.13.84.95z"/></svg>
           </a>
           <a id="link-line" href="#" target="_blank" class="social-icon" title="LINE">
@@ -468,7 +474,7 @@
 
         if (response.socials) {
           document.getElementById('link-fb').href = response.socials.facebook || "#";
-          document.getElementById('link-tg').href = response.socials.telegram || "#";
+          document.getElementById('link-tg').href = response.socials.telegram || "https://t.me/kunros16";
           document.getElementById('link-line').href = response.socials.line || "#";
           document.getElementById('link-tt').href = response.socials.tiktok || "#";
           document.getElementById('link-yt').href = response.socials.youtube || "#";
