@@ -24,16 +24,16 @@
       max-width: 480px; 
     }
 
-    /* 🖼️ CSS សម្រាប់តម្រូវរូបភាព Banner ឱ្យស្អាត Full Background */
+    /* 🖼️ CSS សម្រាប់ Banner ឱ្យបង្ហាញរូបភាពពេញលេញ 100% មិនដាច់សងខាង */
     .banner-slider {
       position: relative;
       width: 100%;
-      height: 150px;
+      aspect-ratio: 3.2 / 1;
       border-radius: 10px;
       overflow: hidden;
       margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      background-color: #1e1e1e;
+      background-color: transparent;
     }
 
     .banner-slide {
@@ -54,8 +54,8 @@
     .banner-slide img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* បង្ហាញរូបភាពធំពេញលេញ ១០០% ដោយមិនបែក ឬសង្កត់ទ្រង់ទ្រាយរូប */
-      background: #1e1e1e;
+      object-fit: fill;
+      border-radius: 10px;
     }
 
     .header-social-box {
