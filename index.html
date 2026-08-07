@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ហាងលក់ខោអាវ</title>
+  <title>ហាងទំនិញ</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { 
@@ -244,14 +244,14 @@
       color: #ff4747;
     }
 
-    .order-box {
+    .view-box {
       background: white;
       border-radius: 10px;
       padding: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
       display: none;
     }
-    .order-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 8px; }
+    .view-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 8px; }
 
     .cart-items-container {
       max-height: 220px;
@@ -275,10 +275,6 @@
     .cart-item-img {
       width: 45px !important;
       height: 45px !important;
-      max-width: 45px !important;
-      max-height: 45px !important;
-      min-width: 45px !important;
-      min-height: 45px !important;
       border-radius: 6px;
       object-fit: cover !important;
       margin-right: 10px;
@@ -317,12 +313,40 @@
       white-space: nowrap;
     }
 
-    .empty-cart-msg {
+    .empty-msg {
       font-size: 11px;
       color: #999;
       text-align: center;
       padding: 15px 0;
     }
+
+    /* History Card Style */
+    .history-card {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #fafafa;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+    .status-badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .status-waiting { background: #fff3cd; color: #856404; }
+    .status-paid { background: #d4edda; color: #155724; }
+    .status-delivered { background: #cce5ff; color: #004085; }
+    .status-unpaid { background: #f8d7da; color: #721c24; }
 
     input, select { 
       width: 100%; 
@@ -370,7 +394,7 @@
       justify-content: center;
       color: #ffffff;
       text-decoration: none;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       background: none;
       border: none;
@@ -385,7 +409,7 @@
     }
 
     .nav-icon-emoji {
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 2px;
       line-height: 1;
     }
@@ -393,12 +417,12 @@
     .badge-count {
       position: absolute;
       top: 4px;
-      right: 28%;
+      right: 22%;
       background-color: #ff4747;
       color: white;
       border-radius: 10px;
       padding: 1px 5px;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: bold;
       display: none;
     }
@@ -408,6 +432,7 @@
 
   <div class="app-container">
     
+    <!-- 1. Home View -->
     <div id="home-view">
       <div id="banner-slider" class="banner-slider">
         <div class="banner-slide active"><img src="https://picsum.photos/600/200" alt="Sponsor"></div>
@@ -426,7 +451,7 @@
             <a id="link-fb" href="#" target="_blank" class="social-icon" title="Facebook">
               <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </a>
-            <a id="link-tg" href="https://t.me/kunros16" target="_blank" class="social-icon" title="Telegram">
+            <a id="link-tg" href="#" target="_blank" class="social-icon" title="Telegram">
               <svg viewBox="0 0 24 24" fill="#24A1DE"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.03 9.56c-.15.68-.56.84-1.13.53l-3.1-2.29-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.13l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.03-4.64c.56-.21 1.05.13.84.95z"/></svg>
             </a>
             <a id="link-line" href="#" target="_blank" class="social-icon" title="LINE">
@@ -447,12 +472,12 @@
       </div>
     </div>
 
-    <!-- 🛒 Order View -->
-    <div id="order-box" class="order-box">
+    <!-- 2. Order Box View -->
+    <div id="order-box" class="view-box">
       <h3>🛒 បញ្ជូនការកុម្ម៉ង់ទិញ</h3>
       
       <div id="cart-items-list" class="cart-items-container">
-        <div class="empty-cart-msg">មិនទាន់មានទំនិញក្នុងកន្ត្រកឡើយ</div>
+        <div class="empty-msg">មិនទាន់មានទំនិញក្នុងកន្ត្រកឡើយ</div>
       </div>
 
       <div style="margin-bottom: 8px; font-size: 12px; font-weight: bold; text-align: right;">
@@ -479,9 +504,18 @@
 
       <button class="btn-submit" onclick="submitOrder()">បញ្ជាទិញភ្លាមៗ</button>
     </div>
+
+    <!-- 3. History View (ប្រវត្តិកុម្ម៉ង់) -->
+    <div id="history-box" class="view-box">
+      <h3>📜 ប្រវត្តិការកុម្ម៉ង់ទិញរបស់ខ្ញុំ</h3>
+      <div id="history-list-container">
+        <div class="empty-msg">⏳ កំពុងផ្ទុកប្រវត្តិកុម្ម៉ង់...</div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- 📱 Bottom Navigation Bar -->
+  <!-- 📱 Bottom Navigation Bar (4 Buttons) -->
   <div class="bottom-nav">
     <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
       <span class="nav-icon-emoji">🏠</span>
@@ -492,18 +526,20 @@
       <span class="nav-icon-emoji">🛒</span>
       <span>ការកុម្ម៉ង់</span>
     </button>
-    <a href="https://t.me/Narakh17" target="_blank" class="nav-item" id="nav-contact">
+    <button class="nav-item" id="nav-history" onclick="switchTab('history')">
+      <span class="nav-icon-emoji">📜</span>
+      <span>ប្រវត្តិ</span>
+    </button>
+    <a href="#" target="_blank" class="nav-item" id="nav-contact">
       <span class="nav-icon-emoji">💬</span>
       <span>ទំនាក់ទំនង</span>
     </a>
   </div>
 
   <script>
-    // 1. 🔍 ទាញយក Store ID ពី URL (?store=shop_xxxx)[cite: 1]
     const urlParams = new URLSearchParams(window.location.search);
     const currentStoreId = urlParams.get('store') || 'main_shop';
 
-    // 2. 🔗 កែសម្រួល API URL ឱ្យផ្ញើ parameter ?store=... ទៅកាន់ Google Apps Script[cite: 1]
     const BASE_API_URL = "https://script.google.com/macros/s/AKfycbxRisA9I_OlAWZHt-vxWrvcNPwizPbDdqDklIqVZnvk9Iutd9OlWy4PcIQLOgFzVj6W/exec";
     const API_URL = BASE_API_URL + "?store=" + currentStoreId;
 
@@ -536,19 +572,30 @@
     function switchTab(tabName) {
       const homeView = document.getElementById('home-view');
       const orderBox = document.getElementById('order-box');
+      const historyBox = document.getElementById('history-box');
+
       const navHome = document.getElementById('nav-home');
       const navOrder = document.getElementById('nav-order');
+      const navHistory = document.getElementById('nav-history');
+
+      homeView.style.display = 'none';
+      orderBox.style.display = 'none';
+      historyBox.style.display = 'none';
+
+      navHome.classList.remove('active');
+      navOrder.classList.remove('active');
+      navHistory.classList.remove('active');
 
       if (tabName === 'home') {
         homeView.style.display = 'block';
-        orderBox.style.display = 'none';
         navHome.classList.add('active');
-        navOrder.classList.remove('active');
       } else if (tabName === 'order') {
-        homeView.style.display = 'none';
         orderBox.style.display = 'block';
-        navHome.classList.remove('active');
         navOrder.classList.add('active');
+      } else if (tabName === 'history') {
+        historyBox.style.display = 'block';
+        navHistory.classList.add('active');
+        fetchHistoryFromServer();
       }
     }
 
@@ -567,11 +614,15 @@
         if (response.announcement) document.getElementById('announcement-text').innerText = response.announcement;
         
         if (response.socials) {
+          const tgUrl = response.socials.telegram || "#";
           document.getElementById('link-fb').href = response.socials.facebook || "#";
-          document.getElementById('link-tg').href = response.socials.telegram || "https://t.me/kunros16";
+          document.getElementById('link-tg').href = tgUrl;
           document.getElementById('link-line').href = response.socials.line || "#";
           document.getElementById('link-tt').href = response.socials.tiktok || "#";
           document.getElementById('link-yt').href = response.socials.youtube || "#";
+
+          // 🔗 កំណត់ Link ឱ្យប៊ូតុង "ទំនាក់ទំនង" ខាងក្រោមដោយស្វ័យប្រវត្តិ
+          document.getElementById('nav-contact').href = tgUrl;
         }
 
         if (response.products) {
@@ -580,6 +631,46 @@
           renderProducts(response.products);
         }
       }
+    }
+
+    function fetchHistoryFromServer() {
+      const container = document.getElementById('history-list-container');
+      container.innerHTML = "<div class='empty-msg'>⏳ កំពុងផ្ទុកប្រវត្តិកុម្ម៉ង់...</div>";
+
+      const script = document.createElement('script');
+      script.src = API_URL + "&action=getHistory&buyerChatId=" + encodeURIComponent(buyerChatId || "") + "&t=" + new Date().getTime() + "&callback=handleHistoryResponse";
+      document.body.appendChild(script);
+    }
+
+    function handleHistoryResponse(res) {
+      const container = document.getElementById('history-list-container');
+      if (!res || !res.history || res.history.length === 0) {
+        container.innerHTML = "<div class='empty-msg'>📭 មិនទាន់មានប្រវត្តិបញ្ជាទិញឡើយ!</div>";
+        return;
+      }
+
+      let html = '';
+      res.history.forEach(item => {
+        let statusClass = 'status-waiting';
+        let statusText = '⏳ រង់ចាំពិនិត្យ';
+
+        if (item.status === 'PAID') { statusClass = 'status-paid'; statusText = '✅ បានទូទាត់'; }
+        else if (item.status === 'DELIVERED') { statusClass = 'status-delivered'; statusText = '🚚 បានដឹកជញ្ជូន'; }
+        else if (item.status === 'UNPAID') { statusClass = 'status-unpaid'; statusText = '❌ បដិសេធ'; }
+
+        html += `
+          <div class="history-card">
+            <div class="history-header">
+              <span>កូដ៖ #${item.orderId}</span>
+              <span class="status-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div style="font-size:11px; color:#555; margin-bottom:4px;">📅 ${item.date}</div>
+            <div style="font-size:12px; font-weight:bold; color:#222;">👕 ${item.items}</div>
+            <div style="font-size:12px; font-weight:bold; color:#ff4747; margin-top:4px;">💰 សរុប៖ $${item.totalPrice}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
 
     function renderBanners(bannerUrls) {
@@ -678,7 +769,7 @@
 
       const keys = Object.keys(cart);
       if (keys.length === 0) {
-        cartItemsHtml = '<div class="empty-cart-msg">មិនទាន់មានទំនិញក្នុងកន្ត្រកឡើយ</div>';
+        cartItemsHtml = '<div class="empty-msg">មិនទាន់មានទំនិញក្នុងកន្ត្រកឡើយ</div>';
       } else {
         keys.forEach(key => {
           let item = cart[key];
@@ -756,7 +847,7 @@
       const btn = document.querySelector('.btn-submit');
 
       if (res && res.status === "blocked") {
-        alert("⚠️ Your order problem, please contact seller!");
+        alert("⚠️ អ្នកមានការកុម្ម៉ង់ជំពាក់ដែលមិនទាន់ទូទាត់! សូមទាក់ទងអ្នកលក់មុនធ្វើការកុម្ម៉ង់ថ្មី។");
         btn.innerText = "បញ្ជាទិញភ្លាមៗ";
         btn.disabled = false;
         return;
@@ -772,11 +863,7 @@
       btn.innerText = "បញ្ជាទិញភ្លាមៗ";
       btn.disabled = false;
       
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.close();
-      } else {
-        switchTab('home');
-      }
+      switchTab('history');
     }
   </script>
 </body>
