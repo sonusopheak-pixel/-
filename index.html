@@ -14,7 +14,7 @@
     body { 
       background-color: #f4f4f4; 
       margin: 0; 
-      padding: 8px; 
+      padding: 8px 8px 65px 8px; /* ថែម padding ខាងក្រោមដើម្បីកុំឱ្យបារប៊ូតុងបាំង */
       display: flex;
       justify-content: center;
     }
@@ -24,7 +24,7 @@
       max-width: 480px; 
     }
 
-    /* 🖼️ CSS សម្រាប់ Banner ឱ្យបង្ហាញរូបភាពពេញលេញ 100% មិនដាច់សងខាង */
+    /* 🖼️ CSS សម្រាប់ Banner ឱ្យបង្ហាញរូបភាពពេញលេញ 100% */
     .banner-slider {
       position: relative;
       width: 100%;
@@ -255,11 +255,12 @@
       border-radius: 10px;
       padding: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: none; /* លាក់ជាមុន នៅពេលស្ថិតលើ Home */
     }
     .order-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 8px; }
 
     .cart-items-container {
-      max-height: 180px;
+      max-height: 220px;
       overflow-y: auto;
       border: 1px dashed #eee;
       border-radius: 8px;
@@ -345,50 +346,111 @@
     }
     
     .loading { text-align: center; color: #777; padding: 15px; grid-column: 1 / -1; font-size: 12px; }
+
+    /* 📱 Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 55px;
+      background-color: #1b4d3e; /* ពណ៌បៃតងចាស់ដូចក្នុងរូប */
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+      z-index: 9999;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    .nav-item.active {
+      color: #2ecc71;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 2px;
+      fill: currentColor;
+    }
+
+    .badge-count {
+      position: absolute;
+      top: 4px;
+      right: 25%;
+      background-color: #ff4747;
+      color: white;
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: bold;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     
-    <div id="banner-slider" class="banner-slider">
-      <div class="banner-slide active"><img src="https://picsum.photos/600/200" alt="Sponsor"></div>
-    </div>
-
-    <div class="header-social-box">
-      <div class="marquee-container">
-        <marquee id="announcement-text" behavior="scroll" direction="left" scrollamount="4">
-          🎉 កំពុងផ្ទុកព័ត៌មាន...
-        </marquee>
+    <div id="home-view">
+      <div id="banner-slider" class="banner-slider">
+        <div class="banner-slide active"><img src="https://picsum.photos/600/200" alt="Sponsor"></div>
       </div>
 
-      <div class="social-row">
-        <span class="header-title">ទំនាក់ទំនងយើង៖</span>
-        <div class="social-links">
-          <a id="link-fb" href="#" target="_blank" class="social-icon" title="Facebook">
-            <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          </a>
-          <a id="link-tg" href="https://t.me/kunros16" target="_blank" class="social-icon" title="Telegram">
-            <svg viewBox="0 0 24 24" fill="#24A1DE"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.03 9.56c-.15.68-.56.84-1.13.53l-3.1-2.29-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.13l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.03-4.64c.56-.21 1.05.13.84.95z"/></svg>
-          </a>
-          <a id="link-line" href="#" target="_blank" class="social-icon" title="LINE">
-            <svg viewBox="0 0 24 24" fill="#00B900"><path d="M19.34 10.03c0-3.89-3.79-7.05-8.47-7.05-4.68 0-8.47 3.16-8.47 7.05 0 3.48 3.01 6.39 7.08 6.95.28.06.65.18.75.42.08.21.05.53.03.74-.04.26-.18.99-.2 1.2-.03.28-.15 1.08.95.59 1.1-.49 5.92-3.49 8.08-5.97 1.08-1.2 1.76-2.5 1.76-3.93zm-12.72 1.63h-1.34c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h1.34c.21 0 .38.17.38.38v.52c0 .21-.17.38-.38.38h-.82v.28h.82c.21 0 .38.17.38.38v.52c0 .21-.17.38-.38.38zm2.46 0h-.52c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h.52c.21 0 .38.17.38.38v2.33c0 .21-.17.38-.38.38zm3.2 0h-.52c-.15 0-.28-.09-.34-.22l-1.12-1.57v1.41c0 .21-.17.38-.38.38h-.52c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h.52c.15 0 .28.09.34.22l1.12 1.57v-1.41c0-.21.17-.38.38-.38h.52c.21 0 .38.17.38.38v2.33c0 .21-.17.38-.38.38zm2.84-1.05h-.82v-.28h.82c.21 0 .38-.17.38-.38v-.52c0-.21-.17-.38-.38-.38h-1.34c-.21 0-.38.17-.38.38v2.33c0 .21.17.38.38.38h1.34c.21 0 .38-.17.38-.38v-.52c0-.21-.17-.38-.38-.38z"/></svg>
-          </a>
-          <a id="link-tt" href="#" target="_blank" class="social-icon" title="TikTok">
-            <svg viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.82.55-1.32 1.48-1.34 2.47-.04 1.25.7 2.45 1.83 2.87 1.16.45 2.53.22 3.48-.56.88-.7 1.34-1.8 1.33-2.92.02-5.26.01-10.53.01-15.79z"/></svg>
-          </a>
-          <a id="link-yt" href="#" target="_blank" class="social-icon" title="YouTube">
-            <svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
+      <div class="header-social-box">
+        <div class="marquee-container">
+          <marquee id="announcement-text" behavior="scroll" direction="left" scrollamount="4">
+            🎉 កំពុងផ្ទុកព័ត៌មាន...
+          </marquee>
+        </div>
+
+        <div class="social-row">
+          <span class="header-title">ទំនាក់ទំនងយើង៖</span>
+          <div class="social-links">
+            <a id="link-fb" href="#" target="_blank" class="social-icon" title="Facebook">
+              <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a id="link-tg" href="https://t.me/kunros16" target="_blank" class="social-icon" title="Telegram">
+              <svg viewBox="0 0 24 24" fill="#24A1DE"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.03 9.56c-.15.68-.56.84-1.13.53l-3.1-2.29-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.35-.39-.13l-7.14 4.5-3.08-.96c-.67-.21-.68-.67.14-.99l12.03-4.64c.56-.21 1.05.13.84.95z"/></svg>
+            </a>
+            <a id="link-line" href="#" target="_blank" class="social-icon" title="LINE">
+              <svg viewBox="0 0 24 24" fill="#00B900"><path d="M19.34 10.03c0-3.89-3.79-7.05-8.47-7.05-4.68 0-8.47 3.16-8.47 7.05 0 3.48 3.01 6.39 7.08 6.95.28.06.65.18.75.42.08.21.05.53.03.74-.04.26-.18.99-.2 1.2-.03.28-.15 1.08.95.59 1.1-.49 5.92-3.49 8.08-5.97 1.08-1.2 1.76-2.5 1.76-3.93zm-12.72 1.63h-1.34c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h1.34c.21 0 .38.17.38.38v.52c0 .21-.17.38-.38.38h-.82v.28h.82c.21 0 .38.17.38.38v.52c0 .21-.17.38-.38.38zm2.46 0h-.52c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h.52c.21 0 .38.17.38.38v2.33c0 .21-.17.38-.38.38zm3.2 0h-.52c-.15 0-.28-.09-.34-.22l-1.12-1.57v1.41c0 .21-.17.38-.38.38h-.52c-.21 0-.38-.17-.38-.38v-2.33c0-.21.17-.38.38-.38h.52c.15 0 .28.09.34.22l1.12 1.57v-1.41c0-.21.17-.38.38-.38h.52c.21 0 .38.17.38.38v2.33c0 .21-.17.38-.38.38zm2.84-1.05h-.82v-.28h.82c.21 0 .38-.17.38-.38v-.52c0-.21-.17-.38-.38-.38h-1.34c-.21 0-.38.17-.38.38v2.33c0 .21.17.38.38.38h1.34c.21 0 .38-.17.38-.38v-.52c0-.21-.17-.38-.38-.38z"/></svg>
+            </a>
+            <a id="link-tt" href="#" target="_blank" class="social-icon" title="TikTok">
+              <svg viewBox="0 0 24 24" fill="#000000"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.82.55-1.32 1.48-1.34 2.47-.04 1.25.7 2.45 1.83 2.87 1.16.45 2.53.22 3.48-.56.88-.7 1.34-1.8 1.33-2.92.02-5.26.01-10.53.01-15.79z"/></svg>
+            </a>
+            <a id="link-yt" href="#" target="_blank" class="social-icon" title="YouTube">
+              <svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
         </div>
       </div>
+
+      <div id="main-content">
+        <div class="loading">កំពុងផ្ទុកទំនិញ...</div>
+      </div>
     </div>
 
-    <div id="main-content">
-      <div class="loading">កំពុងផ្ទុកទំនិញ...</div>
-    </div>
-
-    <div class="order-box">
+    <!-- ប្រអប់ Order/កន្ត្រកទំនិញបង្ហាញដាច់ដោយឡែក -->
+    <div id="order-box" class="order-box">
       <h3>🛒 បញ្ជូនការកុម្ម៉ង់ទិញ</h3>
       
       <div id="cart-items-list" class="cart-items-container">
@@ -421,6 +483,23 @@
     </div>
   </div>
 
+  <!-- 📱 Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>ទំព័រដើម</span>
+    </button>
+    <button class="nav-item" id="nav-order" onclick="switchTab('order')">
+      <span id="nav-cart-badge" class="badge-count">0</span>
+      <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <span>ការកុម្ម៉ង់</span>
+    </button>
+    <a href="https://t.me/Narakh17" target="_blank" class="nav-item" id="nav-contact">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <span>ទំនាក់ទំនង</span>
+    </a>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwvKz4kcj-HznHfO9wsCz6MzR_mUYWP9hZiLxBDvPwm7Tr90JqZXBGxAbNiGi5m4-mj/exec";
     let cart = {}; 
@@ -448,6 +527,25 @@
       }
       fetchDataFromServer();
     };
+
+    function switchTab(tabName) {
+      const homeView = document.getElementById('home-view');
+      const orderBox = document.getElementById('order-box');
+      const navHome = document.getElementById('nav-home');
+      const navOrder = document.getElementById('nav-order');
+
+      if (tabName === 'home') {
+        homeView.style.display = 'block';
+        orderBox.style.display = 'none';
+        navHome.classList.add('active');
+        navOrder.classList.remove('active');
+      } else if (tabName === 'order') {
+        homeView.style.display = 'none';
+        orderBox.style.display = 'block';
+        navHome.classList.remove('active');
+        navOrder.classList.add('active');
+      }
+    }
 
     function fetchDataFromServer() {
       const script = document.createElement('script');
@@ -618,6 +716,15 @@
       document.getElementById('cart-items-list').innerHTML = cartItemsHtml;
       document.getElementById('cart-count').innerText = totalCount;
       document.getElementById('cart-total').innerText = '$' + totalPrice;
+
+      // បច្ចុប្បន្នភាព Badge ចំនួនទំនិញលើប៊ូតុង Nav
+      const badge = document.getElementById('nav-cart-badge');
+      if (totalCount > 0) {
+        badge.innerText = totalCount;
+        badge.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
+      }
     }
 
     function submitOrder() {
@@ -684,6 +791,7 @@
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.close();
       } else {
+        switchTab('home');
         renderProducts(allProducts);
       }
     }
