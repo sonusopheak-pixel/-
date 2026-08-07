@@ -79,7 +79,6 @@
       align-items: center;
     }
 
-    /* ✨ Magic Glow Text ✨ */
     .magic-text {
       font-size: 12px;
       font-weight: 800;
@@ -207,6 +206,17 @@
       cursor: pointer;
     }
 
+    .btn-out-stock {
+      width: 100%;
+      background-color: #ccc;
+      color: #666;
+      border: none;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
     .qty-control {
       display: flex;
       align-items: center;
@@ -243,7 +253,6 @@
     }
     .order-box h3 { margin-top: 0; font-size: 14px; margin-bottom: 8px; }
 
-    /* 🛒 ជួសជុលប្រអប់បង្ហាញបញ្ជីទំនិញក្នុងកន្ត្រក ឱ្យស្អាតទំហំតូចល្មម មិនដើរលាតសន្ធឹង */
     .cart-items-container {
       max-height: 220px;
       overflow-y: auto;
@@ -339,7 +348,6 @@
 
     .loading { text-align: center; color: #777; padding: 15px; grid-column: 1 / -1; font-size: 12px; }
 
-    /* 📱 Bottom Navigation Bar */
     .bottom-nav {
       position: fixed !important;
       bottom: 0 !important;
@@ -491,7 +499,14 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwvKz4kcj-HznHfO9wsCz6MzR_mUYWP9hZiLxBDvPwm7Tr90JqZXBGxAbNiGi5m4-mj/exec";
+    // 1. 🔍 ទាញយក Store ID ពី URL (?store=shop_xxxx)[cite: 1]
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentStoreId = urlParams.get('store') || 'main_shop';
+
+    // 2. 🔗 កែសម្រួល API URL ឱ្យផ្ញើ parameter ?store=... ទៅកាន់ Google Apps Script[cite: 1]
+    const BASE_API_URL = "https://script.google.com/macros/s/AKfycbxRisA9I_OlAWZHt-vxWrvcNPwizPbDdqDklIqVZnvk9Iutd9OlWy4PcIQLOgFzVj6W/exec";
+    const API_URL = BASE_API_URL + "?store=" + currentStoreId;
+
     let cart = {}; 
     let allProducts = [];
     let slideIndex = 0;
@@ -508,7 +523,7 @@
         }
       }
 
-      const localData = localStorage.getItem("LOCAL_PRODUCTS");
+      const localData = localStorage.getItem("LOCAL_PRODUCTS_" + currentStoreId);
       if (localData) {
         try { 
           allProducts = JSON.parse(localData);
@@ -539,12 +554,15 @@
 
     function fetchDataFromServer() {
       const script = document.createElement('script');
-      script.src = API_URL + "?t=" + new Date().getTime() + "&callback=handleServerResponse";
+      script.src = API_URL + "&t=" + new Date().getTime() + "&callback=handleServerResponse";
       document.body.appendChild(script);
     }
 
     function handleServerResponse(response) {
       if (response) {
+        if (response.storeName) {
+          document.title = response.storeName;
+        }
         if (response.banners && response.banners.length > 0) renderBanners(response.banners);
         if (response.announcement) document.getElementById('announcement-text').innerText = response.announcement;
         
@@ -558,7 +576,7 @@
 
         if (response.products) {
           allProducts = response.products;
-          localStorage.setItem("LOCAL_PRODUCTS", JSON.stringify(response.products));
+          localStorage.setItem("LOCAL_PRODUCTS_" + currentStoreId, JSON.stringify(response.products));
           renderProducts(response.products);
         }
       }
@@ -719,7 +737,7 @@
       btn.disabled = true;
 
       const itemsText = itemsArray.join(", ");
-      const orderUrl = API_URL + "?action=submitOrder&name=" + encodeURIComponent(name) + 
+      const orderUrl = API_URL + "&action=submitOrder&name=" + encodeURIComponent(name) + 
                        "&phone=" + encodeURIComponent(phone) + 
                        "&address=" + encodeURIComponent(address) + 
                        "&deliveryType=" + encodeURIComponent(deliveryType) + 
